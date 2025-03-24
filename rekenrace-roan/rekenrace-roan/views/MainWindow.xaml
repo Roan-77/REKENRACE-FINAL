@@ -5,8 +5,64 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:rekenrace_roan"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow"
+        Height="450"
+        Width="800">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
+        <!-- Top Header with Background -->
+        <Border Grid.Row="0"
+                Background="LightBlue">
+            <TextBlock Text="Welkom bij Rekenrace"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       FontSize="24"
+                       FontWeight="Bold" />
+        </Border>
+
+        <!-- Input for Name and ComboBox for Difficulty Levels -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="10">
+            <Label Content="Naam:"
+                   Width="47"
+                   Height="30"
+                   VerticalAlignment="Center" />
+            <TextBox x:Name="txtName"
+                     Width="200"
+                     Height="30"
+                     Margin="5"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center" />
+            <ComboBox x:Name="difficultyDropdown"
+                      Width="150"
+                      Height="30"
+                      Margin="5"
+                      SelectedIndex="0">
+                <ComboBoxItem IsEnabled="False"
+                              Content="Moeilijkheidsgraad" />
+                <ComboBoxItem Content="Makkelijk" />
+                <ComboBoxItem Content="Gemiddeld" />
+                <ComboBoxItem Content="Moeilijk" />
+            </ComboBox>
+        </StackPanel>
+
+        <!-- Start Button -->
+        <Button x:Name="btnStart"
+                Width="200"
+                Height="100"
+                Content="Start"
+                Grid.Row="2"
+                Click="btnStart_Click" />
     </Grid>
 </Window>
