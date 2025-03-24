@@ -23,7 +23,8 @@
                 Background="LightBlue">
             <TextBlock Text="Welkom bij Rekenrace"
                        VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       Margin="10"
                        FontSize="24"
                        FontWeight="Bold" />
         </Border>
@@ -50,7 +51,7 @@
                       Margin="5"
                       SelectedIndex="0">
                 <ComboBoxItem IsEnabled="False"
-                              Content="Moeilijkheidsgraad" />
+                              Content="Niveau" />
                 <ComboBoxItem Content="Makkelijk" />
                 <ComboBoxItem Content="Gemiddeld" />
                 <ComboBoxItem Content="Moeilijk" />
