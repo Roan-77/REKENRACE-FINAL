@@ -56,15 +56,16 @@
                     VerticalAlignment="Center">
             <TextBlock Text="{Binding CurrentProblem.Equation}"
                        FontSize="36"
+                       HorizontalAlignment="Center"
                        Margin="10" />
-            <TextBlock Text="{Binding CurrentProblemNumber, StringFormat=Vraag {0} van {1}}"
+            <TextBlock Text="{Binding ProblemNumberInfo}"
                        HorizontalAlignment="Center"
                        Margin="10" />
             <TextBox x:Name="txtAnswer"
                      Width="200"
                      Height="40"
                      FontSize="24"
-                     Text="{Binding UserAnswer, UpdateSourceTrigger=PropertyChanged}"
+                     Text="{Binding UserAnswer, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
                      PreviewTextInput="txtAnswer_PreviewTextInput" />
             <Button Content="Controleren"
                     Width="200"

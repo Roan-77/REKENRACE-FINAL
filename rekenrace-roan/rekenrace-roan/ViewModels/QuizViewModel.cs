@@ -13,7 +13,7 @@ namespace rekenrace_roan.ViewModels
         private Player _player;
         private List<MathProblem> _problems;
         private int _currentProblemIndex;
-        private int _userAnswer;
+        private int? _userAnswer;
         private int _correctAnswersCount;
         private bool _isQuizCompleted;
         private bool _canCheckAnswer = true;
@@ -35,7 +35,7 @@ namespace rekenrace_roan.ViewModels
             get => _problems[_currentProblemIndex];
         }
 
-        public int UserAnswer
+        public int? UserAnswer
         {
             get => _userAnswer;
             set
@@ -55,6 +55,11 @@ namespace rekenrace_roan.ViewModels
             }
         }
 
+        public string ProblemNumberInfo
+        {
+            get => $"Vraag {CurrentProblemNumber} van {TotalProblems}";
+        }
+
         public int CurrentProblemNumber => _currentProblemIndex + 1;
         public int TotalProblems => _problems.Count;
         public int CorrectAnswersCount => _correctAnswersCount;
@@ -72,19 +77,19 @@ namespace rekenrace_roan.ViewModels
             _currentProblemIndex = 0;
             _correctAnswersCount = 0;
             _isQuizCompleted = false;
+            _userAnswer = null;
 
             CheckAnswerCommand = new RelayCommand(CheckAnswer, () => CanCheckAnswer);
         }
 
         public (bool isCorrect, bool isLastProblem) CheckAnswerInternal()
         {
-            // Prevent multiple checks
             if (!CanCheckAnswer)
                 return (false, false);
 
             CanCheckAnswer = false;
 
-            bool isCorrect = UserAnswer == CurrentProblem.CorrectAnswer;
+            bool isCorrect = _userAnswer.HasValue && _userAnswer.Value == CurrentProblem.CorrectAnswer;
             CurrentProblem.IsCorrect = isCorrect;
 
             if (isCorrect)
@@ -92,7 +97,6 @@ namespace rekenrace_roan.ViewModels
                 _correctAnswersCount++;
             }
 
-            // Check if this is the last problem
             bool isLastProblem = _currentProblemIndex == _problems.Count - 1;
 
             return (isCorrect, isLastProblem);
@@ -103,10 +107,11 @@ namespace rekenrace_roan.ViewModels
             if (_currentProblemIndex < _problems.Count - 1)
             {
                 _currentProblemIndex++;
-                UserAnswer = 0;
+                UserAnswer = null;
                 CanCheckAnswer = true;
                 OnPropertyChanged(nameof(CurrentProblem));
                 OnPropertyChanged(nameof(CurrentProblemNumber));
+                OnPropertyChanged(nameof(ProblemNumberInfo));
             }
             else
             {
