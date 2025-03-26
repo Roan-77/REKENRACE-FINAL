@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 using rekenrace_roan.Models;
 using rekenrace_roan.ViewModels;
@@ -20,11 +21,12 @@ namespace rekenrace_roan.views
 
         private void CheckAnswer_Click(object sender, RoutedEventArgs e)
         {
-            bool isLastProblem = _viewModel.CheckAnswer();
+            // Perform answer check
+            var (isCorrect, isLastProblem) = _viewModel.CheckAnswerInternal();
 
             // Show result for current problem
             MessageBoxResult result = MessageBox.Show(
-                _viewModel.UserAnswer == _viewModel.CurrentProblem.CorrectAnswer
+                isCorrect
                     ? "Goed gedaan! Correct antwoord."
                     : $"Helaas, het goede antwoord was {_viewModel.CurrentProblem.CorrectAnswer}.",
                 "Resultaat",
@@ -50,6 +52,11 @@ namespace rekenrace_roan.views
 
                 // Return to main menu
                 BackToMainMenu_Click(sender, e);
+            }
+            else
+            {
+                // Move to next problem after message box is closed
+                _viewModel.MoveToNextProblem();
             }
         }
 

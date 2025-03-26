@@ -71,6 +71,7 @@
                     Height="40"
                     Margin="10"
                     Command="{Binding CheckAnswerCommand}"
+                    IsEnabled="{Binding CanCheckAnswer}"
                     Click="CheckAnswer_Click" />
         </StackPanel>
     </Grid>

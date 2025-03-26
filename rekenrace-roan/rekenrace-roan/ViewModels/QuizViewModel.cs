@@ -16,6 +16,7 @@ namespace rekenrace_roan.ViewModels
         private int _userAnswer;
         private int _correctAnswersCount;
         private bool _isQuizCompleted;
+        private bool _canCheckAnswer = true;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -44,6 +45,16 @@ namespace rekenrace_roan.ViewModels
             }
         }
 
+        public bool CanCheckAnswer
+        {
+            get => _canCheckAnswer;
+            set
+            {
+                _canCheckAnswer = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int CurrentProblemNumber => _currentProblemIndex + 1;
         public int TotalProblems => _problems.Count;
         public int CorrectAnswersCount => _correctAnswersCount;
@@ -62,17 +73,17 @@ namespace rekenrace_roan.ViewModels
             _correctAnswersCount = 0;
             _isQuizCompleted = false;
 
-            CheckAnswerCommand = new RelayCommand(CheckAnswerExecute);
+            CheckAnswerCommand = new RelayCommand(CheckAnswer, () => CanCheckAnswer);
         }
 
-        private void CheckAnswerExecute()
+        public (bool isCorrect, bool isLastProblem) CheckAnswerInternal()
         {
-            CheckAnswer();
-        }
+            // Prevent multiple checks
+            if (!CanCheckAnswer)
+                return (false, false);
 
+            CanCheckAnswer = false;
 
-        public bool CheckAnswer()
-        {
             bool isCorrect = UserAnswer == CurrentProblem.CorrectAnswer;
             CurrentProblem.IsCorrect = isCorrect;
 
@@ -81,20 +92,31 @@ namespace rekenrace_roan.ViewModels
                 _correctAnswersCount++;
             }
 
-            // Move to next problem or complete quiz
+            // Check if this is the last problem
+            bool isLastProblem = _currentProblemIndex == _problems.Count - 1;
+
+            return (isCorrect, isLastProblem);
+        }
+
+        public void MoveToNextProblem()
+        {
             if (_currentProblemIndex < _problems.Count - 1)
             {
                 _currentProblemIndex++;
                 UserAnswer = 0;
+                CanCheckAnswer = true;
                 OnPropertyChanged(nameof(CurrentProblem));
                 OnPropertyChanged(nameof(CurrentProblemNumber));
-                return false;
             }
             else
             {
                 _isQuizCompleted = true;
-                return true;
             }
+        }
+
+        private void CheckAnswer()
+        {
+            // This method is called by the command, but the actual checking is done in CheckAnswerInternal
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
