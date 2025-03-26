@@ -9,9 +9,18 @@ namespace rekenrace_roan
 {
     public partial class MainWindow : Window
     {
+        private HighScoreRepository _highScoreRepository;
+
         public MainWindow()
         {
             InitializeComponent();
+            _highScoreRepository = new HighScoreRepository();
+            LoadHighScores();
+        }
+
+        private void LoadHighScores()
+        {
+            lvHighScores.ItemsSource = _highScoreRepository.GetHighScores();
         }
 
         private void btnStart_Click(object sender, RoutedEventArgs e)
@@ -28,7 +37,7 @@ namespace rekenrace_roan
         }
     }
 
-    // Simple inline converter
+    // StringLengthToBooleanConverter remains the same as in previous implementation
     public class StringLengthToBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

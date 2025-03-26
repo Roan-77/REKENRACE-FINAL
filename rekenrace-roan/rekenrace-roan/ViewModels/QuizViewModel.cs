@@ -15,6 +15,7 @@ namespace rekenrace_roan.ViewModels
         private int _currentProblemIndex;
         private int _userAnswer;
         private int _correctAnswersCount;
+        private bool _isQuizCompleted;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -46,10 +47,9 @@ namespace rekenrace_roan.ViewModels
         public int CurrentProblemNumber => _currentProblemIndex + 1;
         public int TotalProblems => _problems.Count;
         public int CorrectAnswersCount => _correctAnswersCount;
+        public bool IsQuizCompleted => _isQuizCompleted;
 
-        // Using built-in ICommand implementations
         public ICommand CheckAnswerCommand { get; }
-        public ICommand NextProblemCommand { get; }
 
         public QuizViewModel(Player player)
         {
@@ -60,13 +60,18 @@ namespace rekenrace_roan.ViewModels
 
             _currentProblemIndex = 0;
             _correctAnswersCount = 0;
+            _isQuizCompleted = false;
 
-            // Using CommandBinding or RelayCommand if you prefer
-            CheckAnswerCommand = new RelayCommand(CheckAnswer);
-            NextProblemCommand = new RelayCommand(NextProblem, () => _currentProblemIndex < _problems.Count - 1);
+            CheckAnswerCommand = new RelayCommand(CheckAnswerExecute);
         }
 
-        private void CheckAnswer()
+        private void CheckAnswerExecute()
+        {
+            CheckAnswer();
+        }
+
+
+        public bool CheckAnswer()
         {
             bool isCorrect = UserAnswer == CurrentProblem.CorrectAnswer;
             CurrentProblem.IsCorrect = isCorrect;
@@ -75,16 +80,20 @@ namespace rekenrace_roan.ViewModels
             {
                 _correctAnswersCount++;
             }
-        }
 
-        private void NextProblem()
-        {
+            // Move to next problem or complete quiz
             if (_currentProblemIndex < _problems.Count - 1)
             {
                 _currentProblemIndex++;
                 UserAnswer = 0;
                 OnPropertyChanged(nameof(CurrentProblem));
                 OnPropertyChanged(nameof(CurrentProblemNumber));
+                return false;
+            }
+            else
+            {
+                _isQuizCompleted = true;
+                return true;
             }
         }
 
@@ -93,7 +102,7 @@ namespace rekenrace_roan.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        // Simple inline RelayCommand (optional)
+        // RelayCommand class remains the same as in previous implementation
         private class RelayCommand : ICommand
         {
             private readonly Action _execute;

@@ -8,28 +8,47 @@ namespace rekenrace_roan.views
     public partial class QuizWindow : Window
     {
         private QuizViewModel _viewModel;
+        private HighScoreRepository _highScoreRepository;
 
         public QuizWindow(Player player)
         {
             InitializeComponent();
+            _highScoreRepository = new HighScoreRepository();
             _viewModel = new QuizViewModel(player);
             DataContext = _viewModel;
         }
 
         private void CheckAnswer_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(_viewModel.UserAnswer == _viewModel.CurrentProblem.CorrectAnswer
-                ? "Goed gedaan! Correct antwoord."
-                : $"Helaas, het goede antwoord was {_viewModel.CurrentProblem.CorrectAnswer}.",
-                "Resultaat");
-        }
+            bool isLastProblem = _viewModel.CheckAnswer();
 
-        private void NextProblem_Click(object sender, RoutedEventArgs e)
-        {
-            // Check if it's the last problem
-            if (_viewModel.CurrentProblemNumber == _viewModel.TotalProblems)
+            // Show result for current problem
+            MessageBoxResult result = MessageBox.Show(
+                _viewModel.UserAnswer == _viewModel.CurrentProblem.CorrectAnswer
+                    ? "Goed gedaan! Correct antwoord."
+                    : $"Helaas, het goede antwoord was {_viewModel.CurrentProblem.CorrectAnswer}.",
+                "Resultaat",
+                MessageBoxButton.OK
+            );
+
+            // If last problem, show final score and save high score
+            if (isLastProblem)
             {
-                MessageBox.Show($"Quiz voltooid! Je hebt {_viewModel.CorrectAnswersCount} van de {_viewModel.TotalProblems} vragen goed.", "Quiz Resultaat");
+                MessageBox.Show(
+                    $"Quiz voltooid! Je hebt {_viewModel.CorrectAnswersCount} van de {_viewModel.TotalProblems} vragen goed.",
+                    "Eindresultaat",
+                    MessageBoxButton.OK
+                );
+
+                // Save high score
+                _highScoreRepository.SaveHighScore(new HighScore
+                {
+                    Name = _viewModel.Player.Name,
+                    Score = _viewModel.CorrectAnswersCount,
+                    Date = DateTime.Now
+                });
+
+                // Return to main menu
                 BackToMainMenu_Click(sender, e);
             }
         }

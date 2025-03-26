@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:rekenrace_roan"
         xmlns:models="clr-namespace:rekenrace_roan.Models"
         Title="Rekenrace"
-        Height="450"
+        Height="600"
         Width="800">
     <Window.Resources>
         <models:Player x:Key="PlayerModel" />
@@ -14,6 +14,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -57,7 +58,6 @@
                 <ComboBoxItem>Gemiddeld</ComboBoxItem>
                 <ComboBoxItem>Moeilijk</ComboBoxItem>
             </ComboBox>
-
         </StackPanel>
 
         <!-- Start Button -->
@@ -68,6 +68,40 @@
                 Grid.Row="2"
                 Click="btnStart_Click"
                 IsEnabled="{Binding Name.Length, Source={StaticResource PlayerModel}, Converter={StaticResource StringLengthToBooleanConverter}}" />
-        
+
+        <!-- High Scores Section -->
+        <Border Grid.Row="3"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                Margin="20">
+            <StackPanel>
+                <TextBlock Text="High Scores"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="10" />
+                <ListView x:Name="lvHighScores"
+                          Height="200"
+                          Margin="10">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Name}"
+                                           Grid.Column="0" />
+                                <TextBlock Text="{Binding Score}"
+                                           Grid.Column="1" />
+                                <TextBlock Text="{Binding Date, StringFormat=dd/MM/yyyy}"
+                                           Grid.Column="2" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

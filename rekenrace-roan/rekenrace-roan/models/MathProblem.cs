@@ -4,7 +4,7 @@ namespace rekenrace_roan.Models
 {
     public class MathProblem
     {
-        public string Equation { get; set; }
+        public string Equation { get; set; } = string.Empty;
         public int CorrectAnswer { get; set; }
         public bool IsCorrect { get; set; }
 
@@ -15,7 +15,8 @@ namespace rekenrace_roan.Models
             string equation;
 
             // Normalize the difficulty string to handle potential case differences or whitespace
-            difficulty = difficulty?.Trim().ToLower();
+            difficulty = difficulty?.Trim().ToLower() ?? throw new ArgumentNullException(nameof(difficulty));
+
 
             switch (difficulty)
             {

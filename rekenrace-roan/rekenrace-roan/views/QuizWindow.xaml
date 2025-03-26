@@ -24,7 +24,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
         <!-- Top Header with Background -->
@@ -67,21 +66,12 @@
                      FontSize="24"
                      Text="{Binding UserAnswer, UpdateSourceTrigger=PropertyChanged}"
                      PreviewTextInput="txtAnswer_PreviewTextInput" />
-            <Button Content="Controleer"
+            <Button Content="Controleren"
                     Width="200"
                     Height="40"
                     Margin="10"
                     Command="{Binding CheckAnswerCommand}"
                     Click="CheckAnswer_Click" />
         </StackPanel>
-
-        <!-- Navigation -->
-        <Button Content="Volgende"
-                Grid.Row="2"
-                Width="200"
-                Height="40"
-                Margin="10"
-                Command="{Binding NextProblemCommand}"
-                Click="NextProblem_Click" />
     </Grid>
 </Window>
