@@ -20,11 +20,6 @@ namespace rekenrace_roan.Models
     {
         private const string FILE_PATH = "highscores.txt";
 
-        public void ResetHighScores()
-        {
-            File.WriteAllText(FILE_PATH, string.Empty);
-        }
-
 
         public List<HighScore> GetHighScores()
         {
