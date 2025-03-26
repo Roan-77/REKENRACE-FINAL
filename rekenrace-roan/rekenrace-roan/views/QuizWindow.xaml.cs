@@ -36,8 +36,9 @@ namespace rekenrace_roan.views
             // If last problem, show final score and save high score
             if (isLastProblem)
             {
+                string scoreMessage = $"{_viewModel.CorrectAnswersCount} van de 10 goed";
                 MessageBox.Show(
-                    $"Quiz voltooid! Je hebt {_viewModel.CorrectAnswersCount} van de {_viewModel.TotalProblems} vragen goed.",
+                    scoreMessage,
                     "Eindresultaat",
                     MessageBoxButton.OK
                 );
@@ -46,6 +47,7 @@ namespace rekenrace_roan.views
                 _highScoreRepository.SaveHighScore(new HighScore
                 {
                     Name = _viewModel.Player.Name,
+                    Difficulty = _viewModel.Player.Difficulty,
                     Score = _viewModel.CorrectAnswersCount,
                     Date = DateTime.Now
                 });

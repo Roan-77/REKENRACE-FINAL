@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using rekenrace_roan.Models;
@@ -20,7 +21,28 @@ namespace rekenrace_roan
 
         private void LoadHighScores()
         {
-            lvHighScores.ItemsSource = _highScoreRepository.GetHighScores();
+            var allHighScores = _highScoreRepository.GetHighScores();
+
+            // Group high scores by difficulty
+            var makkelijkHighScores = allHighScores
+                .Where(h => h.Difficulty.Equals("Makkelijk", StringComparison.OrdinalIgnoreCase))
+                .Take(5)
+                .ToList();
+
+            var gemiddeldHighScores = allHighScores
+                .Where(h => h.Difficulty.Equals("Gemiddeld", StringComparison.OrdinalIgnoreCase))
+                .Take(5)
+                .ToList();
+
+            var moeilijkHighScores = allHighScores
+                .Where(h => h.Difficulty.Equals("Moeilijk", StringComparison.OrdinalIgnoreCase))
+                .Take(5)
+                .ToList();
+
+            // Set ItemsSource for each ListView
+            lvMakkelijkHighScores.ItemsSource = makkelijkHighScores;
+            lvGemiddeldHighScores.ItemsSource = gemiddeldHighScores;
+            lvMoeilijkHighScores.ItemsSource = moeilijkHighScores;
         }
 
         private void btnStart_Click(object sender, RoutedEventArgs e)
@@ -37,7 +59,7 @@ namespace rekenrace_roan
         }
     }
 
-    // StringLengthToBooleanConverter remains the same as in previous implementation
+    // StringLengthToBooleanConverter remains the same
     public class StringLengthToBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
