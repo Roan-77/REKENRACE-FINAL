@@ -1,27 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using rekenrace_roan.Models;
+using rekenrace_roan.ViewModels;
 
 namespace rekenrace_roan.views
 {
-    /// <summary>
-    /// Interaction logic for QuizWindow.xaml
-    /// </summary>
     public partial class QuizWindow : Window
     {
-        public QuizWindow()
+        private QuizViewModel _viewModel;
+
+        public QuizWindow(Player player)
         {
             InitializeComponent();
+            _viewModel = new QuizViewModel(player);
+            DataContext = _viewModel;
+        }
+
+        private void CheckAnswer_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(_viewModel.UserAnswer == _viewModel.CurrentProblem.CorrectAnswer
+                ? "Goed gedaan! Correct antwoord."
+                : $"Helaas, het goede antwoord was {_viewModel.CurrentProblem.CorrectAnswer}.",
+                "Resultaat");
+        }
+
+        private void NextProblem_Click(object sender, RoutedEventArgs e)
+        {
+            // Check if it's the last problem
+            if (_viewModel.CurrentProblemNumber == _viewModel.TotalProblems)
+            {
+                MessageBox.Show($"Quiz voltooid! Je hebt {_viewModel.CorrectAnswersCount} van de {_viewModel.TotalProblems} vragen goed.", "Quiz Resultaat");
+                BackToMainMenu_Click(sender, e);
+            }
+        }
+
+        private void BackToMainMenu_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+            this.Close();
+        }
+
+        private void txtAnswer_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Only allow numeric input
+            e.Handled = !int.TryParse(e.Text, out _);
         }
     }
 }
