@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using rekenrace_roan.Models;
 using rekenrace_roan.ViewModels;
 
@@ -24,25 +26,21 @@ namespace rekenrace_roan.views
             // Perform answer check
             var (isCorrect, isLastProblem) = _viewModel.CheckAnswerInternal();
 
-            // Show result for current problem
-            MessageBoxResult result = MessageBox.Show(
-                isCorrect
-                    ? "Goed gedaan! Correct antwoord."
-                    : $"Helaas, het goede antwoord was {_viewModel.CurrentProblem.CorrectAnswer}.",
-                "Resultaat",
-                MessageBoxButton.OK
-            );
+            // Update feedback text
+            if (isCorrect)
+            {
+                txtFeedback.Text = "Goed gedaan! Correct antwoord.";
+                txtFeedback.Foreground = Brushes.Green;
+            }
+            else
+            {
+                txtFeedback.Text = $"Helaas, het goede antwoord was {_viewModel.CurrentProblem.CorrectAnswer}.";
+                txtFeedback.Foreground = Brushes.Red;
+            }
 
-            // If last problem, show final score and save high score
+            // If last problem, save high score and return to main menu
             if (isLastProblem)
             {
-                string scoreMessage = $"{_viewModel.CorrectAnswersCount} van de 10 goed";
-                MessageBox.Show(
-                    scoreMessage,
-                    "Eindresultaat",
-                    MessageBoxButton.OK
-                );
-
                 // Save high score
                 _highScoreRepository.SaveHighScore(new HighScore
                 {
@@ -52,12 +50,17 @@ namespace rekenrace_roan.views
                     Date = DateTime.Now
                 });
 
-                // Return to main menu
-                BackToMainMenu_Click(sender, e);
+                // Show final score feedback
+                txtFeedback.Text = $"Eind resultaat: {_viewModel.CorrectAnswersCount} van de 10 goed";
+                txtFeedback.Foreground = Brushes.Blue;
+
+                // Disable further interactions
+                txtAnswer.IsEnabled = false;
+                ((Button)sender).IsEnabled = false;
             }
             else
             {
-                // Move to next problem after message box is closed
+                // Move to next problem
                 _viewModel.MoveToNextProblem();
             }
         }

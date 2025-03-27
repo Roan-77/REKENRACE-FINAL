@@ -21,28 +21,11 @@ namespace rekenrace_roan
 
         private void LoadHighScores()
         {
-            var allHighScores = _highScoreRepository.GetHighScores();
+            // Get top 10 high scores across all difficulties
+            var topHighScores = _highScoreRepository.GetHighScores();
 
-            // Group high scores by difficulty
-            var makkelijkHighScores = allHighScores
-                .Where(h => h.Difficulty.Equals("Makkelijk", StringComparison.OrdinalIgnoreCase))
-                .Take(5)
-                .ToList();
-
-            var gemiddeldHighScores = allHighScores
-                .Where(h => h.Difficulty.Equals("Gemiddeld", StringComparison.OrdinalIgnoreCase))
-                .Take(5)
-                .ToList();
-
-            var moeilijkHighScores = allHighScores
-                .Where(h => h.Difficulty.Equals("Moeilijk", StringComparison.OrdinalIgnoreCase))
-                .Take(5)
-                .ToList();
-
-            // Set ItemsSource for each ListView
-            lvMakkelijkHighScores.ItemsSource = makkelijkHighScores;
-            lvGemiddeldHighScores.ItemsSource = gemiddeldHighScores;
-            lvMoeilijkHighScores.ItemsSource = moeilijkHighScores;
+            // Set ItemsSource for the high scores ListView
+            lvTopHighScores.ItemsSource = topHighScores;
         }
 
         private void btnStart_Click(object sender, RoutedEventArgs e)

@@ -20,13 +20,12 @@ namespace rekenrace_roan.Models
     {
         private const string FILE_PATH = "highscores.txt";
 
-
         public List<HighScore> GetHighScores()
         {
             if (!File.Exists(FILE_PATH))
                 return new List<HighScore>();
 
-            // Read and parse high scores, grouping by name and difficulty
+            // Read and parse high scores, keeping top 10 across all difficulties
             return File.ReadAllLines(FILE_PATH)
                 .Select(line =>
                 {
@@ -39,11 +38,9 @@ namespace rekenrace_roan.Models
                         Date = DateTime.Parse(parts[3].Trim())
                     };
                 })
-                .GroupBy(h => new { h.Name, h.Difficulty })
-                .Select(g => g.OrderByDescending(h => h.Score).First())
-                .OrderBy(h => GetDifficultyOrder(h.Difficulty))
-                .ThenByDescending(h => h.Score)
-                .Take(30) // Increased to allow more high scores across difficulties
+                .OrderByDescending(h => h.Score)
+                .ThenByDescending(h => h.Date)
+                .Take(10)
                 .ToList();
         }
 
@@ -68,47 +65,17 @@ namespace rekenrace_roan.Models
                     .ToList();
             }
 
-            // Find existing score for this name and difficulty
-            var existingScore = existingScores.FirstOrDefault(s =>
-                s.Name.Equals(newHighScore.Name, StringComparison.OrdinalIgnoreCase) &&
-                s.Difficulty.Equals(newHighScore.Difficulty, StringComparison.OrdinalIgnoreCase));
-
-            // Remove existing score if new score is higher
-            if (existingScore != null)
-            {
-                if (newHighScore.Score > existingScore.Score)
-                {
-                    existingScores.Remove(existingScore);
-                }
-                else
-                {
-                    // If existing score is higher or equal, don't save new score
-                    return;
-                }
-            }
-
             // Add new high score
             existingScores.Add(newHighScore);
 
-            // Save updated high scores
+            // Save top 10 high scores overall
             File.WriteAllLines(FILE_PATH,
                 existingScores
-                    .OrderBy(h => GetDifficultyOrder(h.Difficulty))
-                    .ThenByDescending(h => h.Score)
+                    .OrderByDescending(h => h.Score)
+                    .ThenByDescending(h => h.Date)
+                    .Take(10)
                     .Select(h => $"{h.Name}, {h.Difficulty}, {h.Score}, {h.Date:yyyy-MM-dd HH:mm:ss}")
             );
-        }
-
-        // Helper method to order difficulties
-        private int GetDifficultyOrder(string difficulty)
-        {
-            return difficulty?.ToLower() switch
-            {
-                "makkelijk" => 1,
-                "gemiddeld" => 2,
-                "moeilijk" => 3,
-                _ => 4
-            };
         }
     }
 }
