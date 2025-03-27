@@ -322,31 +322,103 @@
                            HorizontalAlignment="Center"
                            Margin="10" />
 
-                <ListView x:Name="lvTopHighScores"
-                          ItemsSource="{Binding TopHighScores}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding Name}"
-                                           Grid.Column="0"
-                                           Style="{StaticResource HighScoreRowStyle}" />
-                                <TextBlock Text="{Binding Score, StringFormat='{}{0} van de 10 goed'}"
-                                           Grid.Column="1"
-                                           Style="{StaticResource HighScoreRowStyle}" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
-                                           Grid.Column="2"
-                                           Style="{StaticResource HighScoreRowStyle}" />
+                    <!-- Makkelijk Column -->
+                    <StackPanel Grid.Column="0"
+                                Margin="10">
+                        <TextBlock Text="Makkelijk"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   FontSize="18"
+                                   Margin="0,0,0,10" />
+                        <ListView ItemsSource="{Binding MakkelijkHighScores}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Name}"
+                                                   Grid.Column="0" />
+                                        <TextBlock Text="{Binding Score, StringFormat='{}{0} van de 10 goed'}"
+                                                   Grid.Column="1"
+                                                   Margin="10,0" />
+                                        <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                   Grid.Column="2" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
 
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    <!-- Gemiddeld Column -->
+                    <StackPanel Grid.Column="1"
+                                Margin="10">
+                        <TextBlock Text="Gemiddeld"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   FontSize="18"
+                                   Margin="0,0,0,10" />
+                        <ListView ItemsSource="{Binding GemiddeldHighScores}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Name}"
+                                                   Grid.Column="0" />
+                                        <TextBlock Text="{Binding Score, StringFormat='{}{0} van de 10 goed'}"
+                                                   Grid.Column="1"
+                                                   Margin="10,0" />
+                                        <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                   Grid.Column="2" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+
+                    <!-- Moeilijk Column -->
+                    <StackPanel Grid.Column="2"
+                                Margin="10">
+                        <TextBlock Text="Moeilijk"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   FontSize="18"
+                                   Margin="0,0,0,10" />
+                        <ListView ItemsSource="{Binding MoeilijkHighScores}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Name}"
+                                                   Grid.Column="0" />
+                                        <TextBlock Text="{Binding Score, StringFormat='{}{0} van de 10 goed'}"
+                                                   Grid.Column="1"
+                                                   Margin="10,0" />
+                                        <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                   Grid.Column="2" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </Border>
 

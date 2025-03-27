@@ -16,17 +16,46 @@ namespace rekenrace_roan
         {
             InitializeComponent();
             _highScoreRepository = new HighScoreRepository();
+            MakkelijkHighScores = new List<HighScore>();
+            GemiddeldHighScores = new List<HighScore>();
+            MoeilijkHighScores = new List<HighScore>();
             LoadHighScores();
         }
 
         private void LoadHighScores()
         {
-            // Get top 10 high scores across all difficulties
-            var topHighScores = _highScoreRepository.GetHighScores();
+            // Get all high scores
+            var allHighScores = _highScoreRepository.GetHighScores();
 
-            // Set ItemsSource for the high scores ListView
-            lvTopHighScores.ItemsSource = topHighScores;
+            // Group high scores by difficulty
+            var makkelijkHighScores = allHighScores
+                .Where(h => h.Difficulty.Equals("Makkelijk", StringComparison.OrdinalIgnoreCase))
+                .Take(5)
+                .ToList();
+
+            var gemiddeldHighScores = allHighScores
+                .Where(h => h.Difficulty.Equals("Gemiddeld", StringComparison.OrdinalIgnoreCase))
+                .Take(5)
+                .ToList();
+
+            var moeilijkHighScores = allHighScores
+                .Where(h => h.Difficulty.Equals("Moeilijk", StringComparison.OrdinalIgnoreCase))
+                .Take(5)
+                .ToList();
+
+            // Set ItemsSource for each difficulty's ListView
+            MakkelijkHighScores = makkelijkHighScores;
+            GemiddeldHighScores = gemiddeldHighScores;
+            MoeilijkHighScores = moeilijkHighScores;
+
+            // Bind the data to the DataContext
+            DataContext = this;
         }
+
+        // Properties for binding
+        public List<HighScore> MakkelijkHighScores { get; private set; }
+        public List<HighScore> GemiddeldHighScores { get; private set; }
+        public List<HighScore> MoeilijkHighScores { get; private set; }
 
         private void btnStart_Click(object sender, RoutedEventArgs e)
         {
