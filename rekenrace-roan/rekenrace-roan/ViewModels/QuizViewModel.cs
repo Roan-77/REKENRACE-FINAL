@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Windows.Media;
 using rekenrace_roan.Models;
 
 namespace rekenrace_roan.ViewModels
@@ -20,6 +22,7 @@ namespace rekenrace_roan.ViewModels
         private bool _canMoveToNextProblem = false;
         private string _feedbackMessage = string.Empty;
         private bool _isFeedbackPositive;
+        private MediaPlayer _mediaPlayer;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -112,6 +115,7 @@ namespace rekenrace_roan.ViewModels
             _correctAnswersCount = 0;
             _isQuizCompleted = false;
             _userAnswer = null;
+            _mediaPlayer = new MediaPlayer();
 
             CheckAnswerCommand = new RelayCommand(CheckAnswer, () => CanCheckAnswer);
             MoveToNextProblemCommand = new RelayCommand(MoveToNextProblem, () => CanMoveToNextProblem);
@@ -131,16 +135,48 @@ namespace rekenrace_roan.ViewModels
                 _correctAnswersCount++;
                 FeedbackMessage = "Goed gedaan! Correct antwoord.";
                 IsFeedbackPositive = true;
+                PlaySound("correct.mp3");
             }
             else
             {
                 FeedbackMessage = $"Helaas, het goede antwoord was {CurrentProblem.CorrectAnswer}.";
                 IsFeedbackPositive = false;
+                PlaySound("incorrect-2.mp3");
             }
 
             CanMoveToNextProblem = true;
         }
 
+        private void PlaySound(string soundFileName)
+        {
+            try
+            {
+                // Get the full path to the sound file
+                string soundPath = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Sounds",
+                    soundFileName);
+
+                // Check if the file exists
+                if (File.Exists(soundPath))
+                {
+                    // Stop any currently playing sound
+                    _mediaPlayer.Stop();
+
+                    // Set the new source and play
+                    _mediaPlayer.Open(new Uri(soundPath));
+                    _mediaPlayer.Play();
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Sound file not found: {soundPath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error playing sound: {ex.Message}");
+            }
+        }
 
         public void MoveToNextProblem()
         {
@@ -159,10 +195,9 @@ namespace rekenrace_roan.ViewModels
             else
             {
                 _isQuizCompleted = true;
-                OnPropertyChanged(nameof(IsQuizCompleted)); // Add this line
+                OnPropertyChanged(nameof(IsQuizCompleted));
             }
         }
-
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
