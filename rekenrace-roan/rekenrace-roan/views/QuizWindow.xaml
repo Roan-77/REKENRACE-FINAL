@@ -7,6 +7,7 @@
         Height="450"
         Width="800">
     <Window.Resources>
+        <local:BooleanToForegroundConverter x:Key="BooleanToForegroundConverter" />
         <Style x:Key="HeaderLabelStyle"
                TargetType="Label">
             <Setter Property="VerticalAlignment"
@@ -29,6 +30,17 @@
                     Value="18" />
             <Setter Property="FontWeight"
                     Value="Bold" />
+        </Style>
+
+        <!-- Custom button style -->
+        <Style x:Key="CustomButtonStyle"
+               TargetType="Button">
+            <Setter Property="Width"
+                    Value="200" />
+            <Setter Property="Height"
+                    Value="40" />
+            <Setter Property="Margin"
+                    Value="10" />
         </Style>
     </Window.Resources>
 
@@ -66,6 +78,8 @@
         <!-- Feedback Area -->
         <TextBlock x:Name="txtFeedback"
                    Grid.Row="1"
+                   Text="{Binding FeedbackMessage}"
+                   Foreground="{Binding IsFeedbackPositive, Converter={StaticResource BooleanToForegroundConverter}}"
                    Style="{StaticResource FeedbackTextStyle}" />
 
         <!-- Quiz Content -->
@@ -85,13 +99,20 @@
                      FontSize="24"
                      Text="{Binding UserAnswer, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
                      PreviewTextInput="txtAnswer_PreviewTextInput" />
-            <Button Content="Controleren"
-                    Width="200"
-                    Height="40"
-                    Margin="10"
-                    Command="{Binding CheckAnswerCommand}"
-                    IsEnabled="{Binding CanCheckAnswer}"
-                    Click="CheckAnswer_Click" />
+
+            <!-- Buttons for checking and moving to next problem -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <Button Content="Controleren"
+                        Style="{StaticResource CustomButtonStyle}"
+                        Command="{Binding CheckAnswerCommand}"
+                        IsEnabled="{Binding CanCheckAnswer}" />
+
+                <Button Content="Volgende Som"
+                        Style="{StaticResource CustomButtonStyle}"
+                        Command="{Binding MoveToNextProblemCommand}"
+                        IsEnabled="{Binding CanMoveToNextProblem}" />
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

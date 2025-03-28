@@ -17,6 +17,9 @@ namespace rekenrace_roan.ViewModels
         private int _correctAnswersCount;
         private bool _isQuizCompleted;
         private bool _canCheckAnswer = true;
+        private bool _canMoveToNextProblem = false;
+        private string _feedbackMessage = string.Empty;
+        private bool _isFeedbackPositive;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -55,6 +58,36 @@ namespace rekenrace_roan.ViewModels
             }
         }
 
+        public bool CanMoveToNextProblem
+        {
+            get => _canMoveToNextProblem;
+            set
+            {
+                _canMoveToNextProblem = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string FeedbackMessage
+        {
+            get => _feedbackMessage;
+            set
+            {
+                _feedbackMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsFeedbackPositive
+        {
+            get => _isFeedbackPositive;
+            set
+            {
+                _isFeedbackPositive = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string ProblemNumberInfo
         {
             get => $"Vraag {CurrentProblemNumber} van {TotalProblems}";
@@ -66,6 +99,7 @@ namespace rekenrace_roan.ViewModels
         public bool IsQuizCompleted => _isQuizCompleted;
 
         public ICommand CheckAnswerCommand { get; }
+        public ICommand MoveToNextProblemCommand { get; }
 
         public QuizViewModel(Player player)
         {
@@ -80,26 +114,36 @@ namespace rekenrace_roan.ViewModels
             _userAnswer = null;
 
             CheckAnswerCommand = new RelayCommand(CheckAnswer, () => CanCheckAnswer);
+            MoveToNextProblemCommand = new RelayCommand(MoveToNextProblem, () => CanMoveToNextProblem);
         }
 
-        public (bool isCorrect, bool isLastProblem) CheckAnswerInternal()
+        public void CheckAnswer()
         {
             if (!CanCheckAnswer)
-                return (false, false);
+                return;
 
             CanCheckAnswer = false;
-
             bool isCorrect = _userAnswer.HasValue && _userAnswer.Value == CurrentProblem.CorrectAnswer;
             CurrentProblem.IsCorrect = isCorrect;
 
             if (isCorrect)
             {
                 _correctAnswersCount++;
+                FeedbackMessage = "Goed gedaan! Correct antwoord.";
+                IsFeedbackPositive = true;
+            }
+            else
+            {
+                FeedbackMessage = $"Helaas, het goede antwoord was {CurrentProblem.CorrectAnswer}.";
+                IsFeedbackPositive = false;
             }
 
-            bool isLastProblem = _currentProblemIndex == _problems.Count - 1;
+            CanMoveToNextProblem = true;
 
-            return (isCorrect, isLastProblem);
+            if (_currentProblemIndex == _problems.Count - 1)
+            {
+                _isQuizCompleted = true;
+            }
         }
 
         public void MoveToNextProblem()
@@ -109,6 +153,9 @@ namespace rekenrace_roan.ViewModels
                 _currentProblemIndex++;
                 UserAnswer = null;
                 CanCheckAnswer = true;
+                CanMoveToNextProblem = false;
+                FeedbackMessage = string.Empty;
+
                 OnPropertyChanged(nameof(CurrentProblem));
                 OnPropertyChanged(nameof(CurrentProblemNumber));
                 OnPropertyChanged(nameof(ProblemNumberInfo));
@@ -117,11 +164,6 @@ namespace rekenrace_roan.ViewModels
             {
                 _isQuizCompleted = true;
             }
-        }
-
-        private void CheckAnswer()
-        {
-            // This method is called by the command, but the actual checking is done in CheckAnswerInternal
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)

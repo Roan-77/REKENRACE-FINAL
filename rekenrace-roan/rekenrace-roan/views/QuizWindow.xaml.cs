@@ -5,6 +5,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using rekenrace_roan.Models;
 using rekenrace_roan.ViewModels;
+using System.Globalization;
+using System.Windows.Data;
 
 namespace rekenrace_roan.views
 {
@@ -19,50 +21,13 @@ namespace rekenrace_roan.views
             _highScoreRepository = new HighScoreRepository();
             _viewModel = new QuizViewModel(player);
             DataContext = _viewModel;
-        }
 
-        private void CheckAnswer_Click(object sender, RoutedEventArgs e)
-        {
-            // Perform answer check
-            var (isCorrect, isLastProblem) = _viewModel.CheckAnswerInternal();
-
-            // Update feedback text
-            if (isCorrect)
+            // Add the BooleanToForegroundConverter to resources
+            if (!Resources.Contains("BooleanToForegroundConverter"))
             {
-                txtFeedback.Text = "Goed gedaan! Correct antwoord.";
-                txtFeedback.Foreground = Brushes.Green;
-            }
-            else
-            {
-                txtFeedback.Text = $"Helaas, het goede antwoord was {_viewModel.CurrentProblem.CorrectAnswer}.";
-                txtFeedback.Foreground = Brushes.Red;
+                Resources.Add("BooleanToForegroundConverter", new BooleanToForegroundConverter());
             }
 
-            // If last problem, save high score and return to main menu
-            if (isLastProblem)
-            {
-                // Save high score
-                _highScoreRepository.SaveHighScore(new HighScore
-                {
-                    Name = _viewModel.Player.Name,
-                    Difficulty = _viewModel.Player.Difficulty,
-                    Score = _viewModel.CorrectAnswersCount,
-                    Date = DateTime.Now
-                });
-
-                // Show final score feedback
-                txtFeedback.Text = $"Eind resultaat: {_viewModel.CorrectAnswersCount} van de 10 goed";
-                txtFeedback.Foreground = Brushes.Blue;
-
-                // Disable further interactions
-                txtAnswer.IsEnabled = false;
-                ((Button)sender).IsEnabled = false;
-            }
-            else
-            {
-                // Move to next problem
-                _viewModel.MoveToNextProblem();
-            }
         }
 
         private void BackToMainMenu_Click(object sender, RoutedEventArgs e)
@@ -76,6 +41,24 @@ namespace rekenrace_roan.views
         {
             // Only allow numeric input
             e.Handled = !int.TryParse(e.Text, out _);
+        }
+    }
+
+    // Converter to change feedback text color based on correctness
+    public class BooleanToForegroundConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool isFeedbackPositive)
+            {
+                return isFeedbackPositive ? Brushes.Green : Brushes.Red;
+            }
+            return Brushes.Black;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
