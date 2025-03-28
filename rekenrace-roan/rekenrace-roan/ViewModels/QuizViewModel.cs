@@ -141,7 +141,7 @@ namespace rekenrace_roan.ViewModels
             {
                 FeedbackMessage = $"Helaas, het goede antwoord was {CurrentProblem.CorrectAnswer}.";
                 IsFeedbackPositive = false;
-                PlaySound("incorrect-2.mp3");
+                PlaySound("incorrect-buzzer.mp3");
             }
 
             CanMoveToNextProblem = true;
