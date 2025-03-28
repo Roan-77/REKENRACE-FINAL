@@ -139,12 +139,8 @@ namespace rekenrace_roan.ViewModels
             }
 
             CanMoveToNextProblem = true;
-
-            if (_currentProblemIndex == _problems.Count - 1)
-            {
-                _isQuizCompleted = true;
-            }
         }
+
 
         public void MoveToNextProblem()
         {
@@ -163,8 +159,10 @@ namespace rekenrace_roan.ViewModels
             else
             {
                 _isQuizCompleted = true;
+                OnPropertyChanged(nameof(IsQuizCompleted)); // Add this line
             }
         }
+
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {

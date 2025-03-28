@@ -62,6 +62,16 @@ namespace rekenrace_roan
             // Get the player model from resources
             Player player = (Player)FindResource("PlayerModel");
 
+            // Check if the difficulty is selected
+            if (string.IsNullOrWhiteSpace(player.Difficulty))
+            {
+                MessageBox.Show("Selecteer een niveau voordat je begint.",
+                                "Niveau vereist",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
+                return;
+            }
+
             // Create and show the quiz window
             QuizWindow quizWindow = new QuizWindow(player);
             quizWindow.Show();
@@ -69,6 +79,7 @@ namespace rekenrace_roan
             // Close the main window
             this.Close();
         }
+
     }
 
     // StringLengthToBooleanConverter remains the same

@@ -93,7 +93,7 @@ namespace rekenrace_roan.Models
                             num2 = num2 == 0 ? 1 : num2;
                             num1 = (num1 * num2);
                             equation = $"{num1} ÷ {num2}";
-                            answer = num1 / num2;
+                            answer = num1 / num2;   
                             break;
                     }
                     break;

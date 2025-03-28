@@ -18,6 +18,8 @@
                     Value="Bold" />
             <Setter Property="Margin"
                     Value="10" />
+            <Setter Property="Foreground"
+                    Value="White" />
         </Style>
 
         <Style x:Key="FeedbackTextStyle"
@@ -32,28 +34,125 @@
                     Value="Bold" />
         </Style>
 
-        <!-- Custom button style -->
+        <!-- Custom button style matching MainWindow -->
         <Style x:Key="CustomButtonStyle"
                TargetType="Button">
+            <Setter Property="Background"
+                    Value="White" />
+            <Setter Property="Foreground"
+                    Value="#de1c7e" />
+            <Setter Property="BorderBrush"
+                    Value="#de1c7e" />
+            <Setter Property="BorderThickness"
+                    Value="2" />
+            <Setter Property="FontSize"
+                    Value="18" />
             <Setter Property="Width"
                     Value="200" />
             <Setter Property="Height"
                     Value="40" />
             <Setter Property="Margin"
                     Value="10" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Hover trigger -->
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Background"
+                                        Value="LightPink" />
+                                <Setter TargetName="ButtonBorder"
+                                        Property="BorderBrush"
+                                        Value="#de1c7e" />
+                                <Setter Property="Foreground"
+                                        Value="#de1c7e" />
+                            </Trigger>
+                            <!-- Disabled trigger -->
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Background"
+                                        Value="LightGray" />
+                                <Setter TargetName="ButtonBorder"
+                                        Property="BorderBrush"
+                                        Value="Gray" />
+                                <Setter Property="Foreground"
+                                        Value="Black" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="EndScreenButtonStyle"
+               TargetType="Button">
+            <Setter Property="Background"
+                    Value="White" />
+            <Setter Property="Foreground"
+                    Value="#de1c7e" />
+            <Setter Property="BorderBrush"
+                    Value="#de1c7e" />
+            <Setter Property="BorderThickness"
+                    Value="2" />
+            <Setter Property="FontSize"
+                    Value="24" />
+            <Setter Property="Width"
+                    Value="250" />
+            <Setter Property="Height"
+                    Value="50" />
+            <Setter Property="Margin"
+                    Value="10" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Hover trigger -->
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Background"
+                                        Value="LightPink" />
+                                <Setter TargetName="ButtonBorder"
+                                        Property="BorderBrush"
+                                        Value="#de1c7e" />
+                                <Setter Property="Foreground"
+                                        Value="#de1c7e" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
-            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Top Header with Background -->
+        <!-- Top Header with Background - matching MainWindow header style -->
         <Border Grid.Row="0"
-                Background="LightBlue">
+                Background="#2e0791">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -71,48 +170,104 @@
                 <Button Content="Terug"
                         Grid.Column="2"
                         Margin="10"
+                        Style="{StaticResource CustomButtonStyle}"
+                        Width="100"
+                        Height="35"
                         Click="BackToMainMenu_Click" />
             </Grid>
         </Border>
 
-        <!-- Feedback Area -->
-        <TextBlock x:Name="txtFeedback"
-                   Grid.Row="1"
-                   Text="{Binding FeedbackMessage}"
-                   Foreground="{Binding IsFeedbackPositive, Converter={StaticResource BooleanToForegroundConverter}}"
-                   Style="{StaticResource FeedbackTextStyle}" />
+        <!-- Quiz Content or End Screen -->
+        <Grid Grid.Row="1"
+              x:Name="QuizContentGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <!-- Quiz Content -->
-        <StackPanel Grid.Row="2"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-            <TextBlock Text="{Binding CurrentProblem.Equation}"
-                       FontSize="36"
-                       HorizontalAlignment="Center"
-                       Margin="10" />
-            <TextBlock Text="{Binding ProblemNumberInfo}"
-                       HorizontalAlignment="Center"
-                       Margin="10" />
-            <TextBox x:Name="txtAnswer"
-                     Width="200"
-                     Height="40"
-                     FontSize="24"
-                     Text="{Binding UserAnswer, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
-                     PreviewTextInput="txtAnswer_PreviewTextInput" />
+            <!-- Feedback Area -->
+            <TextBlock x:Name="txtFeedback"
+                       Grid.Row="0"
+                       Text="{Binding FeedbackMessage}"
+                       Foreground="{Binding IsFeedbackPositive, Converter={StaticResource BooleanToForegroundConverter}}"
+                       Style="{StaticResource FeedbackTextStyle}" />
 
-            <!-- Buttons for checking and moving to next problem -->
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
-                <Button Content="Controleren"
-                        Style="{StaticResource CustomButtonStyle}"
-                        Command="{Binding CheckAnswerCommand}"
-                        IsEnabled="{Binding CanCheckAnswer}" />
+            <!-- Quiz Specific Content -->
+            <StackPanel Grid.Row="1"
+                        x:Name="QuizPanel"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                <TextBlock Text="{Binding CurrentProblem.Equation}"
+                           FontSize="36"
+                           HorizontalAlignment="Center"
+                           Foreground="#de1c7e"
+                           FontWeight="Bold"
+                           Margin="10" />
+                <TextBlock Text="{Binding ProblemNumberInfo}"
+                           HorizontalAlignment="Center"
+                           Foreground="#de1c7e"
+                           FontWeight="Bold"
+                           Margin="10" />
+                <TextBox x:Name="txtAnswer"
+                         Width="200"
+                         Height="40"
+                         BorderBrush="#de1c7e"
+                         BorderThickness="2"
+                         FontSize="24"
+                         Padding="5"
+                         Text="{Binding UserAnswer, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
+                         PreviewTextInput="txtAnswer_PreviewTextInput">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius"
+                                    Value="5" />
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
 
-                <Button Content="Volgende Som"
-                        Style="{StaticResource CustomButtonStyle}"
-                        Command="{Binding MoveToNextProblemCommand}"
-                        IsEnabled="{Binding CanMoveToNextProblem}" />
+                <!-- Buttons for checking and moving to next problem -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <Button Content="Controleren"
+                            Style="{StaticResource CustomButtonStyle}"
+                            Command="{Binding CheckAnswerCommand}"
+                            IsEnabled="{Binding CanCheckAnswer}" />
+
+                    <Button Content="Volgende Som"
+                            Style="{StaticResource CustomButtonStyle}"
+                            Command="{Binding MoveToNextProblemCommand}"
+                            IsEnabled="{Binding CanMoveToNextProblem}" />
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
+
+            <!-- End Screen (Initially Hidden) -->
+            <StackPanel Grid.Row="1"
+                        x:Name="EndScreenPanel"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Visibility="Collapsed">
+                <TextBlock Text="Quiz Voltooid!"
+                           FontSize="36"
+                           Foreground="#de1c7e"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="10" />
+                <TextBlock x:Name="txtFinalScore"
+                           FontSize="24"
+                           Foreground="#de1c7e"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="10" />
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <Button Content="Opnieuw Spelen"
+                            Style="{StaticResource EndScreenButtonStyle}"
+                            Click="RestartQuiz_Click" />
+                    <Button Content="Afsluiten"
+                            Style="{StaticResource EndScreenButtonStyle}"
+                            Click="CloseApp_Click" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
